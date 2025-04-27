@@ -1,0 +1,1 @@
+<h1 class="text-lg text-center">Campo minato</h1>

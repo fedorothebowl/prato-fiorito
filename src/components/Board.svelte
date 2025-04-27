@@ -12,13 +12,17 @@
   type CellType = {
     hasMine: boolean;
     adjacent: number;
-    state: 'covered' | 'open' | 'flagged';
+    state: 'covered' | 'open';
     found?: boolean;
   };
 
   let grid: CellType[][] = [];
   let foundMines = 0;
 
+  /**
+   * Inizializza la griglia, piazza le mine, calcola adiacenze
+   * e azzera il contatore "Hamas" (foundMines)
+   */
   export function initGrid() {
     foundMines = 0;
     dispatch('flagchange', { flaggedCount: foundMines });
@@ -32,6 +36,7 @@
       }))
     );
 
+    // Piazza le mine
     let placed = 0;
     while (placed < mines) {
       const r = Math.floor(Math.random() * rows);
@@ -42,38 +47,55 @@
       }
     }
 
+    // Calcola adiacenze
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         if (grid[r][c].hasMine) continue;
-        let cnt = 0;
-        for (let dr = -1; dr <= 1; dr++)
+        let count = 0;
+        for (let dr = -1; dr <= 1; dr++) {
           for (let dc = -1; dc <= 1; dc++) {
-            const rr = r + dr, cc = c + dc;
+            const rr = r + dr;
+            const cc = c + dc;
             if (
               rr >= 0 && rr < rows &&
               cc >= 0 && cc < cols &&
               grid[rr][cc].hasMine
-            ) cnt++;
+            ) {
+              count++;
+            }
           }
-        grid[r][c].adjacent = cnt;
+        }
+        grid[r][c].adjacent = count;
       }
     }
 
-    grid = grid; // forza reattività
+    // Forza reattività
+    grid = grid;
   }
 
-  function floodFill(r: number, c: number) {
+  /**
+   * Flood-fill che apre e raccoglie le celle scoperte
+   */
+  function floodFill(r: number, c: number, opened: CellType[]) {
     if (r < 0 || r >= rows || c < 0 || c >= cols) return;
     const cell = grid[r][c];
     if (cell.state !== 'covered' || cell.hasMine) return;
     cell.state = 'open';
+    opened.push(cell);
     if (cell.adjacent === 0) {
-      for (let dr = -1; dr <= 1; dr++)
-        for (let dc = -1; dc <= 1; dc++)
-          floodFill(r + dr, c + dc);
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          floodFill(r + dr, c + dc, opened);
+        }
+      }
     }
   }
 
+  /**
+   * Gestisce il click su una cella:
+   * - se mina: conta come "Hamas"
+   * - se non mina: flood-fill e conteggia il numero totale visibile
+   */
   function openCell(e: CustomEvent<{ row: number; col: number }>) {
     const { row, col } = e.detail;
     const cell = grid[row][col];
@@ -87,20 +109,24 @@
       grid = grid;
       checkWin();
     } else if (!cell.hasMine) {
-      // incrementa people ad ogni click sicuro
-      dispatch('people', { count: 1 });
-      floodFill(row, col);
+      const openedCells: CellType[] = [];
+      floodFill(row, col, openedCells);
       grid = grid;
+      // Somma i numeri visibili nelle celle aperte
+      const sumVisible = openedCells.reduce((acc, c) => acc + c.adjacent, 0);
+      dispatch('people', { count: sumVisible });
       checkWin();
     }
   }
 
+  /** Controlla vittoria: tutte le mine individuate */
   function checkWin() {
     if (foundMines >= mines) {
       dispatch('gamewin');
     }
   }
 
+  // Ricrea la griglia ad ogni reset
   $: if (resetCount) initGrid();
   onMount(initGrid);
 </script>

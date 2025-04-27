@@ -34,16 +34,14 @@
 
 <div class="flex flex-col gap-2 mb-4">
   <div class="flex items-center justify-between">
-    <button
-      class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
-      on:click={reset}
-    >
-      Reset
-    </button>
+
     <div class="font-mono text-lg">⏱️ {time}s</div>
   </div>
   <div class="flex items-center justify-between font-mono text-lg">
     <span>Hamas: {totalMines - flaggedCount}</span>
-    <span>People: {peopleCount}</span>
+    <span>{peopleCount} 🧕🏾👳🏽‍♀️ Civilians </span>
+  </div>
+  <div>
+    
   </div>
 </div>
