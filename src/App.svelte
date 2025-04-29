@@ -1,10 +1,15 @@
 <script lang="ts">
+  import InfoPopup from './components/InfoPopup.svelte';
   import Board from './components/Board.svelte';
   import Controls from './components/Controls.svelte';
   import Header from './components/Header.svelte';
 
-  let found = 0;          // Hamas
-  let people = 0;         // nuovo contatore
+  // Stato del popup iniziale
+  let showInfo = true;
+
+  // Dati di gioco
+  let found = 0;    // Terroristi neutralizzati
+  let people = 0;   // Contatore civili
   let didWin = false;
   let resetCount = 0;
 
@@ -21,38 +26,49 @@
     didWin = false;
     found = 0;
     people = 0;
-    resetCount += 1;
+    resetCount++;
   }
 </script>
 
-<div class="flex items-center justify-center min-h-screen p-4">
-  <div class="bg-white shadow-lg rounded-lg p-4 max-w-xs w-full">
+<!-- Layout senza side‑bar: il contenuto viene centrato -->
+<div class="h-screen flex items-center justify-center bg-gray-100">
+  {#if showInfo}
+    <InfoPopup on:close={() => (showInfo = false)} />
+  {/if}
 
-    <Header/>
+  {#if !showInfo}
+    <div class="bg-white shadow-lg rounded-lg p-4 w-full max-w-xs">
+      <Header />
 
-    {#if didWin}
-      <div class="text-center text-green-600 font-bold mb-2">
-        Hai trovato tutte le mine! 🎉
-      </div>
-    {/if}
+      {#if didWin}
+        <div class="text-center text-green-600 font-bold mb-2">
+          Hai trovato tutte le mine! 🎉
+        </div>
+      {/if}
 
-    <Board
-      rows={10}
-      cols={10}
-      mines={10}
-      resetCount={resetCount}
-      on:gamewin={onGameWin}
-      on:flagchange={onFlagChange}
-      on:people={onPeople}
-    />
+      <Board
+        rows={10}
+        cols={10}
+        mines={10}
+        resetCount={resetCount}
+        on:gamewin={onGameWin}
+        on:flagchange={onFlagChange}
+        on:people={onPeople}
+        class="mb-4"
+      />
 
-    <Controls
-      totalMines={10}
-      flaggedCount={found}
-      peopleCount={people}
-      gameEnded={didWin}
-      on:reset={onReset}
-    />
-    
-  </div>
+      <Controls
+        totalMines={10}
+        flaggedCount={found}
+        peopleCount={people}
+        gameEnded={didWin}
+        on:reset={onReset}
+      />
+    </div>
+  {/if}
 </div>
+
+<style>
+  /* Margine leggero sui lati per schermi molto stretti */
+  :global(body) { margin: 0; }
+</style>

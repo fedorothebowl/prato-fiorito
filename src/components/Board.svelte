@@ -18,25 +18,22 @@
 
   let grid: CellType[][] = [];
   let foundMines = 0;
+  let gameOver = false; // blocca ulteriori azioni a vittoria avvenuta
 
-  /**
-   * Inizializza la griglia, piazza le mine, calcola adiacenze
-   * e azzera il contatore "Hamas" (foundMines)
-   */
-  export function initGrid() {
+  function initGrid() {
     foundMines = 0;
-    dispatch('flagchange', { flaggedCount: foundMines });
+    gameOver = false;
 
+    // Crea griglia
     grid = Array.from({ length: rows }, () =>
       Array.from({ length: cols }, () => ({
         hasMine: false,
         adjacent: 0,
-        state: 'covered',
-        found: false,
+        state: 'covered'
       }))
     );
 
-    // Piazza le mine
+    // Posiziona mine casuali
     let placed = 0;
     while (placed < mines) {
       const r = Math.floor(Math.random() * rows);
@@ -47,7 +44,7 @@
       }
     }
 
-    // Calcola adiacenze
+    // Calcola numeri adiacenti
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         if (grid[r][c].hasMine) continue;
@@ -73,30 +70,30 @@
     grid = grid;
   }
 
-  /**
-   * Flood-fill che apre e raccoglie le celle scoperte
-   */
+  onMount(initGrid);
+
   function floodFill(r: number, c: number, opened: CellType[]) {
-    if (r < 0 || r >= rows || c < 0 || c >= cols) return;
     const cell = grid[r][c];
-    if (cell.state !== 'covered' || cell.hasMine) return;
+    if (cell.state !== 'covered') return;
     cell.state = 'open';
     opened.push(cell);
+
     if (cell.adjacent === 0) {
       for (let dr = -1; dr <= 1; dr++) {
         for (let dc = -1; dc <= 1; dc++) {
-          floodFill(r + dr, c + dc, opened);
+          const rr = r + dr;
+          const cc = c + dc;
+          if (rr >= 0 && rr < rows && cc >= 0 && cc < cols) {
+            floodFill(rr, cc, opened);
+          }
         }
       }
     }
   }
 
-  /**
-   * Gestisce il click su una cella:
-   * - se mina: conta come "Hamas"
-   * - se non mina: flood-fill e conteggia il numero totale visibile
-   */
   function openCell(e: CustomEvent<{ row: number; col: number }>) {
+    if (gameOver) return; // blocca interazione a gioco finito
+
     const { row, col } = e.detail;
     const cell = grid[row][col];
     if (cell.state !== 'covered') return;
@@ -112,23 +109,21 @@
       const openedCells: CellType[] = [];
       floodFill(row, col, openedCells);
       grid = grid;
-      // Somma i numeri visibili nelle celle aperte
       const sumVisible = openedCells.reduce((acc, c) => acc + c.adjacent, 0);
       dispatch('people', { count: sumVisible });
       checkWin();
     }
   }
 
-  /** Controlla vittoria: tutte le mine individuate */
   function checkWin() {
     if (foundMines >= mines) {
+      gameOver = true; // stop ulteriori click
       dispatch('gamewin');
     }
   }
 
-  // Ricrea la griglia ad ogni reset
+  // Ricrea griglia ad ogni reset
   $: if (resetCount) initGrid();
-  onMount(initGrid);
 </script>
 
 <div
