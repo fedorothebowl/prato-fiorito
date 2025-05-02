@@ -32,18 +32,11 @@
   onDestroy(() => clearInterval(timer));
 </script>
 
-<div class="flex flex-col gap-2 mb-4">
-  <div class="flex items-center justify-between">
-    <button
-      class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
-      on:click={reset}
-    >
-      Reset
-    </button>
+<div class="flex flex-col max-w-md w-full space-y-4">
     <div class="font-mono text-lg">⏱️ {time}s</div>
+  <div class="flex items-center justify-between font-mono text-lg gap-4">
+    <span class="w-1/2 text-center rounded-full px-6 py-2 shadow-xl bg-[#ffeac9] font-bold text-amber-900">Terrorism: {flaggedCount}</span>
+    <span class="w-1/2 text-center rounded-full px-6 py-2 shadow-xl bg-[#ffeac9] font-bold text-amber-900">Civilians: {peopleCount}</span>
   </div>
-  <div class="flex items-center justify-between font-mono text-lg">
-    <span>Terrorism: {flaggedCount}</span>
-    <span>Civilians: {peopleCount}</span>
-  </div>
+  <button class="rounded-full px-6 py-2 shadow-xl bg-[#ffeac9] font-bold text-amber-900 cursor-pointer" on:click={reset}>Reset</button>
 </div>

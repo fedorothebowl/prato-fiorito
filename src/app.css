@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+body{
+    font-size: 1rem;
+}
+
+.font-honk{
+    font-family: "Honk";
+}
+
+@font-face {
+    font-family: "Honk";
+    src: url('./assets/fonts/Honk-Regular-VariableFont_MORF\,SHLN.ttf') format('truetype');
+}

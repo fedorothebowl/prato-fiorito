@@ -14,7 +14,7 @@
 </script>
 
 <div
-  class="aspect-square flex items-center justify-center
+  class="aspect-square flex items-center justify-center cursor-pointer text-[23px]
          border border-gray-400 select-none transition-colors duration-200
          {cell.state === 'covered' ? 'bg-gray-300 hover:bg-gray-200' : ''}
          {cell.state === 'open'     ? 'bg-gray-100' : ''}

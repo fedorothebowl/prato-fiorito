@@ -31,20 +31,16 @@
 </script>
 
 <!-- Layout senza side‑bar: il contenuto viene centrato -->
-<div class="h-screen flex items-center justify-center bg-gray-100">
+
+<div class="h-screen bg-gradient-to-b from-[#ffeac9]  to-[#ffbe99] flex items-center justify-between flex-col pb-4">
   {#if showInfo}
     <InfoPopup on:close={() => (showInfo = false)} />
   {/if}
 
-  {#if !showInfo}
-    <div class="bg-white shadow-lg rounded-lg p-4 w-full max-w-xs">
-      <Header />
+  <!-- {#if !showInfo} -->
+  <Header />
 
-      {#if didWin}
-        <div class="text-center text-green-600 font-bold mb-2">
-          Hai trovato tutte le mine! 🎉
-        </div>
-      {/if}
+    <div class="bg-gradient-to-b from-[#ffbe99]  to-[#ffeac9] shadow-lg rounded-lg p-4 w-full max-w-md">
 
       <Board
         rows={10}
@@ -54,21 +50,28 @@
         on:gamewin={onGameWin}
         on:flagchange={onFlagChange}
         on:people={onPeople}
-        class="mb-4"
       />
 
-      <Controls
-        totalMines={10}
-        flaggedCount={found}
-        peopleCount={people}
-        gameEnded={didWin}
-        on:reset={onReset}
-      />
     </div>
-  {/if}
+
+    <Controls
+      totalMines={10}
+      flaggedCount={found}
+      peopleCount={people}
+      gameEnded={didWin}
+      on:reset={onReset}
+    />
+   
 </div>
 
+{#if didWin}
+  <div class="fixed w-screen h-screen z-[1] bg-black/50 grid place-items-center inset-0">
+    <div class="bg-gradient-to-t from-[#ffeac9]  to-[#ffbe99] w-max h-max px-20 py-10 text-3xl text-center font-honk rounded-xl shadow-xl">
+      <span class="text-6xl">Congratulations!</span> <br> You have neutralized {found} terrorists at the cost of {people + found} human lives.
+    </div>
+  </div>
+{/if}
+
 <style>
-  /* Margine leggero sui lati per schermi molto stretti */
-  :global(body) { margin: 0; }
+  :global(body) { margin: 0; }  
 </style>

@@ -3,21 +3,15 @@
     const dispatch = createEventDispatcher();
   </script>
   
-  <div
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-  >
-    <div
-      class="bg-white p-6 rounded-lg shadow-lg max-w-lg text-gray-800"
-    >
-      <h2 class="text-xl font-bold mb-4">Lorem</h2>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam sed magni natus ab. Fugiat nulla amet ex. Fugit perspiciatis illo, rem earum hic inventore dolor tenetur ad reprehenderit asperiores quae.
-        </p>
+  <div class="fixed w-screen h-screen z-[1] bg-black/50 grid place-items-center inset-0">
+    <div class="bg-gradient-to-t from-[#ffeac9]  to-[#ffbe99] w-max h-max px-4 py-10  text-center rounded-xl shadow-xl max-w-lg">
+      <h3 class="text-3xl font-bold mb-4 font-honk">Rules</h3>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem consectetur nobis similique impedit amet ratione illo earum. Id ab dignissimos, in fugiat minima commodi nam eius aliquam impedit pariatur soluta!</p>
       <button
         on:click={() => dispatch('close')}
-        class="mt-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded border border-gray-400"
+        class="rounded-full text-xl px-6 py-2 shadow-xl bg-[#ffeac9] font-bold cursor-pointer font-honk mt-8 hover:translate-y-1 transition-transform duration-200 ease-in-out "
       >
-        Ho capito
+        play
       </button>
     </div>
   </div>
