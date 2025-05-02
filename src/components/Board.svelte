@@ -1,10 +1,13 @@
 <script lang="ts">
+
+import { terrorism, people } from '../js/Store';
+  import { mines } from '../js/Store';
+
   import { createEventDispatcher, onMount } from 'svelte';
   import Cell from './Cell.svelte';
 
-  export let rows = 10;
-  export let cols = 10;
-  export let mines = 10;
+  let rows = 10;
+  let cols = 10;
   export let resetCount = 0;
 
   const dispatch = createEventDispatcher();
@@ -35,7 +38,7 @@
 
     // Posiziona mine casuali
     let placed = 0;
-    while (placed < mines) {
+    while (placed < $mines) {
       const r = Math.floor(Math.random() * rows);
       const c = Math.floor(Math.random() * cols);
       if (!grid[r][c].hasMine) {
@@ -102,7 +105,7 @@
       cell.state = 'open';
       cell.found = true;
       foundMines++;
-      dispatch('flagchange', { flaggedCount: foundMines });
+      dispatch('flagchange', { terrorism: foundMines });
       grid = grid;
       checkWin();
     } else if (!cell.hasMine) {
@@ -116,7 +119,7 @@
   }
 
   function checkWin() {
-    if (foundMines >= mines) {
+    if (foundMines >= $mines) {
       gameOver = true; // stop ulteriori click
       dispatch('gamewin');
     }
@@ -126,18 +129,25 @@
   $: if (resetCount) initGrid();
 </script>
 
-<div
-  class="grid gap-1"
-  style="grid-template-columns: repeat({cols}, minmax(0,1fr))"
->
-  {#each grid as row, ri}
-    {#each row as cell, ci}
-      <Cell
-        {cell}
-        row={ri}
-        col={ci}
-        on:open={openCell}
-      />
-    {/each}
-  {/each}
+<div class="w-md">
+  <div class="bg-gradient-to-b from-[#ffbe99]  to-[#ffeac9] shadow-lg rounded-lg p-4 w-full">
+    <div class="grid gap-1" style="grid-template-columns: repeat({cols}, minmax(0,1fr))">
+      {#each grid as row, ri}
+        {#each row as cell, ci}
+          <Cell
+            {cell}
+            row={ri}
+            col={ci}
+            on:open={openCell}
+          />
+        {/each}
+      {/each}
+  
+    </div>
+  </div>
+  
+  <div class="flex items-center justify-between font-mono text-lg gap-4 mt-4">
+    <span class="w-1/2 text-center rounded-full px-6 py-2 shadow-xl bg-[#ffeac9] font-bold text-amber-900">Terrorism: {$terrorism}</span>
+    <span class="w-1/2 text-center rounded-full px-6 py-2 shadow-xl bg-[#ffeac9] font-bold text-amber-900">Civilians: {$people}</span>
+  </div>
 </div>
