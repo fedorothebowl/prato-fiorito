@@ -1,6 +1,6 @@
 <script lang="ts">
 
-import { terrorism, people } from '../js/Store';
+  import { terrorism, people, reset, gameWin } from '../js/Store';
   import { mines } from '../js/Store';
 
   import { createEventDispatcher, onMount } from 'svelte';
@@ -8,7 +8,6 @@ import { terrorism, people } from '../js/Store';
 
   let rows = 10;
   let cols = 10;
-  export let resetCount = 0;
 
   const dispatch = createEventDispatcher();
 
@@ -121,12 +120,17 @@ import { terrorism, people } from '../js/Store';
   function checkWin() {
     if (foundMines >= $mines) {
       gameOver = true; // stop ulteriori click
-      dispatch('gamewin');
+      $gameWin = true;
     }
   }
 
   // Ricrea griglia ad ogni reset
-  $: if (resetCount) initGrid();
+  reset.subscribe(value =>{
+    if(value){
+      initGrid();
+    }
+  });
+
 </script>
 
 <div class="w-md">
